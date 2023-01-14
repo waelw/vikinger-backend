@@ -5,8 +5,7 @@
 	"printWidth": 120,
 	"tabWidth": 2,
 	"bracketSameLine": false,
-	"arrowParens": "always",
+	"arrowParens": "avoid",
 	"singleAttributePerLine": true,
-	"useTabs": true,
-	"endOfLine": "lf"
+	"useTabs": true
 }
