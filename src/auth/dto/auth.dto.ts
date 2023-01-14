@@ -13,6 +13,7 @@ export class LoginDto {
 export class SignupDto {
 	@IsString()
 	@MaxLength(20)
+	@MinLength(4)
 	@IsNotEmpty()
 	userName: string
 
