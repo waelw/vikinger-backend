@@ -6,10 +6,10 @@ import { PrismaService } from "src/prisma/prisma.service"
 
 import { UsersService } from "./users.service"
 @UseGuards(JwtGaurd)
-@Controller("users")
+@Controller("")
 export class UsersController {
 	constructor(private readonly usersService: UsersService, private prisma: PrismaService) {}
-	@Get()
+	@Get("me")
 	async getUsers(@GetUser() user: User) {
 		const { password, ...retrievedUser } = await this.prisma.user.findUnique({
 			where: {
