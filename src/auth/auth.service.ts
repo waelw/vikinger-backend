@@ -52,7 +52,16 @@ export class AuthService {
 		})
 
 		//check if the email or username already exists
-		if (user) throw new HttpException("User already exists", 400)
+		if (user)
+			throw new HttpException(
+				{
+					status: 400,
+					errors: {
+						...(user.email === dto.email ? { email: "email already exists" } : { username: "username already exists" }),
+					},
+				},
+				400,
+			)
 
 		//hash pass
 
