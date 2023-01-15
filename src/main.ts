@@ -8,7 +8,9 @@ async function bootstrap() {
 	app.setGlobalPrefix("api")
 	app.useGlobalInterceptors(new TransformResponseInterceptor())
 	app.useGlobalPipes(VP)
-	app.enableCors()
+	app.enableCors({
+		origin:"*"
+	})
 	await app.listen(process.env.PORT || 3000)
 }
 bootstrap()
