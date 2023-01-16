@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer"
 import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator"
 import { Match } from "../decorator/passwordMatch.decorator"
 
@@ -35,4 +36,5 @@ export class SignupDto {
 	@IsNotEmpty()
 	@Match("password")
 	confirmPassword: string
+	
 }

@@ -7,9 +7,10 @@ import { PrismaModule } from "./prisma/prisma.module"
 import { ConfigModule } from "@nestjs/config"
 import { NestModule } from "@nestjs/common/interfaces/modules"
 import { MiddlewareConsumer } from "@nestjs/common/interfaces/middleware"
+import { CountryModule } from './country/country.module';
 
 @Module({
-	imports: [UsersModule, AuthModule, PrismaModule, ConfigModule.forRoot({ isGlobal: true })],
+	imports: [UsersModule, AuthModule, PrismaModule, ConfigModule.forRoot({ isGlobal: true }), CountryModule],
 	controllers: [AppController],
 	providers: [AppService],
 })

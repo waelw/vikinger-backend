@@ -9,7 +9,7 @@ export class TransformResponseInterceptor implements NestInterceptor {
 			map(data => {
 				return {
 					status: context.switchToHttp().getResponse().statusCode.toString().startsWith("2") ? "Success" : "Fail",
-					message: data.message,
+					message: data?.message,
 					data,
 				}
 			}),
