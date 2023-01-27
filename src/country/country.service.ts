@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common"
+import { BadRequestException, Injectable } from "@nestjs/common"
 import { NotFoundException } from "@nestjs/common/exceptions/not-found.exception"
 import { PrismaClientExtensionError, PrismaClientKnownRequestError } from "@prisma/client/runtime"
 import { PrismaService } from "src/prisma/prisma.service"
@@ -50,7 +50,7 @@ export class CountryService {
 				}
 			}
 			console.log(err)
-			throw err
+			throw new BadRequestException()
 		}
 	}
 }

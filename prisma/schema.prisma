@@ -20,9 +20,10 @@ model User {
   description String?
   publicEmail String?
   publicWebsite String?
+  birthplace String?
   birthday DateTime?
   occupation String?
-  status String?
+  status Status?
   country Country? @relation(fields: [countryId], references: [id])
   countryId Int?
   city City? @relation(fields: [cityId], references: [id])
