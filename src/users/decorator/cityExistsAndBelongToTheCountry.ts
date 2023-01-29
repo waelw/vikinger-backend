@@ -54,6 +54,7 @@ export class CityExistsValidation implements ValidatorConstraintInterface {
 			},
 		})
 
+		if(!countryFound) return false
 		return countryFound.city.map(c => c.id).includes(city)
 	}
 }
