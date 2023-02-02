@@ -16,7 +16,7 @@ export class SignupDto {
 	@MaxLength(20)
 	@MinLength(4)
 	@IsNotEmpty()
-	userName: string
+	username: string
 
 	@IsString()
 	@IsEmail()

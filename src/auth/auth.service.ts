@@ -45,7 +45,7 @@ export class AuthService {
 						email: dto.email,
 					},
 					{
-						username: dto.userName,
+						username: dto.usernameame,
 					},
 				],
 			},
@@ -73,7 +73,7 @@ export class AuthService {
 			data: {
 				email: dto.email,
 				password: hash,
-				username: dto.userName,
+				username: dto.username,
 			},
 		})
 
