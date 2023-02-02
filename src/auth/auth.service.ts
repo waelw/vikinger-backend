@@ -7,7 +7,11 @@ import { ConfigService } from "@nestjs/config"
 import { Response } from "express"
 @Injectable()
 export class AuthService {
-	constructor(private prismaService: PrismaService, private jwt: JwtService, private config: ConfigService) {}
+	constructor(
+		private prismaService: PrismaService,
+		private jwt: JwtService,
+		private config: ConfigService,
+	) {}
 	async signinLocal({ emailOrUsername, password }: LoginDto) {
 		const user = await this.prismaService.user.findFirst({
 			where: {
@@ -45,7 +49,7 @@ export class AuthService {
 						email: dto.email,
 					},
 					{
-						username: dto.usernameame,
+						username: dto.username,
 					},
 				],
 			},
@@ -57,7 +61,9 @@ export class AuthService {
 				{
 					status: 400,
 					errors: {
-						...(user.email === dto.email ? { email: "email already exists" } : { username: "username already exists" }),
+						...(user.email === dto.email
+							? { email: "email already exists" }
+							: { username: "username already exists" }),
 					},
 				},
 				400,
@@ -92,6 +98,9 @@ export class AuthService {
 			email,
 		}
 
-		return this.jwt.signAsync(payload, { expiresIn: "15m", secret: this.config.get("JWT_SECRET") })
+		return this.jwt.signAsync(payload, {
+			expiresIn: "15m",
+			secret: this.config.get("JWT_SECRET"),
+		})
 	}
 }
