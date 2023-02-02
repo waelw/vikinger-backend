@@ -42,7 +42,7 @@ export class CountryService {
 					city: true,
 				},
 			})
-			return countryCities
+			return countryCities.city
 		} catch (err) {
 			if (err instanceof PrismaClientKnownRequestError) {
 				if (err.code === "P2025") {
