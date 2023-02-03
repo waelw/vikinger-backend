@@ -5,12 +5,18 @@ import { UsersModule } from "./users/users.module"
 import { AuthModule } from "./auth/auth.module"
 import { PrismaModule } from "./prisma/prisma.module"
 import { ConfigModule } from "@nestjs/config"
-import { NestModule } from "@nestjs/common/interfaces/modules"
-import { MiddlewareConsumer } from "@nestjs/common/interfaces/middleware"
-import { CountryModule } from './country/country.module';
+import { CountryModule } from "./country/country.module"
+import { EntertainmentModule } from "./entertainment/entertainment.module"
 
 @Module({
-	imports: [UsersModule, AuthModule, PrismaModule, ConfigModule.forRoot({ isGlobal: true }), CountryModule],
+	imports: [
+		UsersModule,
+		AuthModule,
+		PrismaModule,
+		ConfigModule.forRoot({ isGlobal: true }),
+		CountryModule,
+		EntertainmentModule,
+	],
 	controllers: [AppController],
 	providers: [AppService],
 })
