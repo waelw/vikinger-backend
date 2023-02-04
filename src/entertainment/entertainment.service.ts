@@ -9,18 +9,29 @@ export class EntertainmentService {
 	async getEntertainment(dto: EntertainmentQueryDTO) {
 		const entertainmentFound = await this.prisma.entertainment.findMany({
 			where: {
-				type: {
-					equals: dto.type,
+				AND: {
+					type: {
+						equals: dto.type,
+					},
+					title: {
+						mode: "insensitive",
+						startsWith: dto.query,
+					},
 				},
 			},
 			take: dto.pageSize,
 			skip: dto.pageSize * (dto.page - 1),
 		})
-
 		const total = await this.prisma.entertainment.count({
 			where: {
-				type: {
-					equals: dto.type,
+				AND: {
+					type: {
+						equals: dto.type,
+					},
+					title: {
+						mode: "insensitive",
+						startsWith: dto.query,
+					},
 				},
 			},
 		})

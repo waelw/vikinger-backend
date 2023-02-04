@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,26 +8,52 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  username  String @unique
-  password String 
-  profileName String?
-  tagline String?
-  description String?
-  publicEmail String?
-  publicWebsite String?
-  birthplace String?
-  birthday DateTime?
-  occupation String?
-  status Status?
-  country Country? @relation(fields: [countryId], references: [id])
-  countryId Int?
-  city City? @relation(fields: [cityId], references: [id])
-  cityId Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   Int                    @id @default(autoincrement())
+  email                String                 @unique
+  username             String                 @unique
+  password             String
+  birthday             DateTime?
+  createdAt            DateTime               @default(now())
+  description          String?
+  occupation           String?
+  profileName          String?
+  publicEmail          String?
+  publicWebsite        String?
+  tagline              String?
+  updatedAt            DateTime               @updatedAt
+  countryId            Int?
+  cityId               Int?
+  birthplace           String?
+  status               Status?
+  Entertainments Entertainment[]
+  city                 City?                  @relation(fields: [cityId], references: [id])
+  country              Country?               @relation(fields: [countryId], references: [id])
 }
+
+model Country {
+  id        Int    @id @default(autoincrement())
+  shortname String
+  name      String
+  phonecode Int
+  city      City[]
+  user      User[]
+}
+
+model City {
+  id        Int     @id @default(autoincrement())
+  name      String
+  countryId Int
+  country   Country @relation(fields: [countryId], references: [id])
+  user      User[]
+}
+
+model Entertainment {
+  id                   Int                    @id @default(autoincrement())
+  title                String @unique
+  type                 EentertainmentTypes
+  Users User[]
+}
+
 
 
 enum Status {
@@ -38,20 +61,11 @@ enum Status {
   TAKEN
 }
 
-
-model Country {
-  id Int @default(autoincrement()) @id
-  shortname String
-  name String
-  phonecode Int
-  user User[]
-  city City[]
-}
-
-model City {
-  id Int @default(autoincrement()) @id
-  name String
-  country Country @relation(fields: [countryId], references: [id])
-  countryId Int
-  user User[]
+enum EentertainmentTypes {
+  TV_SHOWS
+  MUSIC_ARTISTS
+  MOVIES
+  BOOKS
+  GAMES
+  HOBBIES
 }

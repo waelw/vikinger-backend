@@ -1,20 +1,23 @@
-import { Transform } from "class-transformer"
+import { Transform, Type } from "class-transformer"
 import {
+	ArrayNotEmpty,
 	Equals,
+	IsArray,
 	IsDate,
-	IsDateString,
 	IsEmail,
 	IsEnum,
 	IsNotEmpty,
+	IsNumber,
 	IsOptional,
 	IsString,
 	IsUrl,
 	MaxLength,
 	ValidateIf,
+	ValidateNested,
 } from "class-validator"
 import { CityExists } from "../decorator/cityExistsAndBelongToTheCountry"
 import { CountryExists } from "../decorator/countryExists.decorator"
-import {Status} from "prisma/prisma-client"
+import { Status, EentertainmentTypes } from "prisma/prisma-client"
 export class CompleteProfileDTO {
 	@IsString()
 	@IsNotEmpty()
@@ -46,11 +49,11 @@ export class CompleteProfileDTO {
 
 	@IsNotEmpty()
 	@Transform(({ value }) => Number.parseInt(value))
-	@CityExists({groups:["country"]})
+	@CityExists({ groups: ["country"] })
 	@ValidateIf(o => !!o.country)
 	city: number
 
-	@Transform(({value})=>new Date(value))
+	@Transform(({ value }) => new Date(value))
 	@IsDate()
 	@IsNotEmpty()
 	birthday: string
@@ -67,4 +70,27 @@ export class CompleteProfileDTO {
 	@IsString()
 	@IsNotEmpty()
 	birthplace: string
+}
+
+export class CompleteInterestsDTO {
+	@IsNotEmpty()
+	@IsNumber({}, { message: "each value must be a number", each: true })
+	interests: number[]
+
+	@IsNotEmpty()
+	@IsArray()
+	@ArrayNotEmpty()
+	@ValidateNested({ each: true })
+	@Type(() => NewInterests)
+	new: NewInterests[]
+}
+
+class NewInterests {
+	@IsNotEmpty()
+	@IsString()
+	name: string
+
+	@IsNotEmpty()
+	@IsEnum(EentertainmentTypes)
+	type: EentertainmentTypes
 }

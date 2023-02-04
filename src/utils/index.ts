@@ -53,13 +53,14 @@ export class PaginationInterceptor implements NestInterceptor {
 export class PaginationMiddleware implements NestMiddleware {
 	use(req: Request, res: Response, next: NextFunction) {
 		const paginationParams: PaginationParams = {
-			page: 0,
+			page: 1,
 			pageSize: 10,
 		}
 		req.query.page =
 			req.query.page && Number(req.query.page) > 1 ? req.query.page : "1"
+			console.log(req.query.pageSize)
 		req.query.pageSize =
-			req.query.pageSize && Number(req.query.pageSize) > 1
+			req.query.pageSize && Number(req.query.pageSize) >= 1
 				? req.query.pageSize
 				: "10"
 		next()

@@ -1,7 +1,10 @@
 import { Injectable } from "@nestjs/common"
 import { User } from "@prisma/client"
 import { PrismaService } from "src/prisma/prisma.service"
-import { CompleteProfileDTO } from "./dto/completeProfileDto"
+import {
+	CompleteInterestsDTO,
+	CompleteProfileDTO,
+} from "./dto/completeProfileDto"
 
 @Injectable()
 export class UsersService {
@@ -22,5 +25,29 @@ export class UsersService {
 			},
 		})
 		return retrievedUser
+	}
+
+	async completeInterests(
+		user: Omit<User, "password">,
+		completeInterestsDTO: CompleteInterestsDTO,
+	) {
+		const { interests, new: newInterests } = completeInterestsDTO
+
+		await this.prisma.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				Entertainments: {
+					connect: interests.map(item => ({ id: item })),
+					connectOrCreate: newInterests.map(item => ({
+						create: { title: item.name, type: item.type },
+						where: { title: item.name },
+					})),
+				},
+			},
+		})
+
+		return "Done Successfully'"
 	}
 }

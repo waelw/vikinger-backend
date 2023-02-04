@@ -7,4 +7,8 @@ export class EntertainmentQueryDTO extends PaginationParams {
 	@IsOptional()
 	@IsEnum(EentertainmentTypes)
 	type?: EentertainmentTypes
+
+	@IsString()
+	@IsOptional()
+	query: string
 }
