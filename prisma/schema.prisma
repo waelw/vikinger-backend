@@ -5,29 +5,30 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
-  id                   Int                    @id @default(autoincrement())
-  email                String                 @unique
-  username             String                 @unique
-  password             String
-  birthday             DateTime?
-  createdAt            DateTime               @default(now())
-  description          String?
-  occupation           String?
-  profileName          String?
-  publicEmail          String?
-  publicWebsite        String?
-  tagline              String?
-  updatedAt            DateTime               @updatedAt
-  countryId            Int?
-  cityId               Int?
-  birthplace           String?
-  status               Status?
-  Entertainments Entertainment[]
-  city                 City?                  @relation(fields: [cityId], references: [id])
-  country              Country?               @relation(fields: [countryId], references: [id])
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  username       String          @unique
+  password       String
+  birthday       DateTime?
+  createdAt      DateTime        @default(now())
+  description    String?
+  occupation     String?
+  profileName    String?
+  publicEmail    String?
+  publicWebsite  String?
+  tagline        String?
+  updatedAt      DateTime        @updatedAt
+  countryId      Int?
+  cityId         Int?
+  birthplace     String?
+  status         Status?
+  city           City?           @relation(fields: [cityId], references: [id])
+  country        Country?        @relation(fields: [countryId], references: [id])
+  Entertainments Entertainment[] @relation("EntertainmentToUser")
 }
 
 model Country {
@@ -48,13 +49,11 @@ model City {
 }
 
 model Entertainment {
-  id                   Int                    @id @default(autoincrement())
-  title                String @unique
-  type                 EentertainmentTypes
-  Users User[]
+  id    Int                 @id @default(autoincrement())
+  title String              @unique
+  type  EentertainmentTypes
+  Users User[]              @relation("EntertainmentToUser")
 }
-
-
 
 enum Status {
   SINGLE
