@@ -4,7 +4,10 @@ import { User } from "@prisma/client"
 import { GetUser } from "src/auth/decorator/param.decorator"
 import { JwtGaurd } from "src/auth/Guard/jwtGaurd"
 import { PrismaService } from "src/prisma/prisma.service"
-import { CompleteInterestsDTO, CompleteProfileDTO } from "./dto/completeProfileDto"
+import {
+	CompleteInterestsDTO,
+	CompleteProfileDTO,
+} from "./dto/completeProfileDto"
 
 import { UsersService } from "./users.service"
 @UseGuards(JwtGaurd)
@@ -19,6 +22,11 @@ export class UsersController {
 		const { password, ...retrievedUser } = await this.prisma.user.findUnique({
 			where: {
 				id: user.id,
+			},
+			include: {
+				city: true,
+				country: true,
+				Entertainments: true,
 			},
 		})
 
@@ -36,8 +44,8 @@ export class UsersController {
 	@Post("users/profile/interests")
 	async completeUserProfileInterests(
 		@GetUser() user: Omit<User, "password">,
-		@Body() completeInterestsDTO:CompleteInterestsDTO,
+		@Body() completeInterestsDTO: CompleteInterestsDTO,
 	) {
-		return this.usersService.completeInterests(user,completeInterestsDTO)
+		return this.usersService.completeInterests(user, completeInterestsDTO)
 	}
 }
