@@ -14,15 +14,15 @@ async function main() {
 	// 		},
 	// 	})
 	//
-	const Ent = [EentertainmentTypes.BOOKS, EentertainmentTypes.GAMES,EentertainmentTypes.HOBBIES,EentertainmentTypes.MOVIES, EentertainmentTypes.MUSIC_ARTISTS,EentertainmentTypes.TV_SHOWS] 
-	for(let i = 0; i < 500 ; i++){
-		await prisma.entertainment.create({
-			data:{
-				title:faker.music.songName(),
-				type:EentertainmentTypes[Ent[i%6]]
-			}
-		})
-	}
+	// const Ent = [EentertainmentTypes.BOOKS, EentertainmentTypes.GAMES,EentertainmentTypes.HOBBIES,EentertainmentTypes.MOVIES, EentertainmentTypes.MUSIC_ARTISTS,EentertainmentTypes.TV_SHOWS] 
+	// for(let i = 0; i < 500 ; i++){
+	// 	await prisma.entertainment.create({
+	// 		data:{
+	// 			title:faker.music.songName(),
+	// 			type:EentertainmentTypes[Ent[i%6]]
+	// 		}
+	// 	})
+	// }
 
 	await prisma.$executeRaw`insert into "Country" (id, shortname, name, phonecode) values (1, 'AF', 'Afghanistan', 93)`
 	await prisma.$executeRaw`insert into "Country" (id, shortname, name, phonecode) values (2, 'AL', 'Albania', 355);`
