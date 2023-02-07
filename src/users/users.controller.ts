@@ -28,6 +28,7 @@ export class UsersController {
 				city: true,
 				country: true,
 				Entertainments: true,
+				Jobs:true
 			},
 		})
 
