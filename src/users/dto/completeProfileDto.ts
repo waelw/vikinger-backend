@@ -57,7 +57,6 @@ export class CompleteProfileDTO {
 	@ValidateIf(o => !!o.country)
 	city: number
 
-	@Transform(({ value }) => new Date(value))
 	@IsDate()
 	@IsNotEmpty()
 	birthday: string
