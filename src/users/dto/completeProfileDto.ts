@@ -1,23 +1,27 @@
 import { Transform, Type } from "class-transformer"
 import {
-	ArrayNotEmpty,
-	Equals,
-	IsArray,
+	ArrayNotEmpty, IsArray,
 	IsDate,
 	IsEmail,
-	IsEnum,
-	IsNotEmpty,
+	IsEnum, IsNotEmpty,
 	IsNumber,
 	IsOptional,
 	IsString,
 	IsUrl,
+	Max,
 	MaxLength,
+	Min,
+	MinLength,
+	Validate,
 	ValidateIf,
 	ValidateNested,
+	ValidationArguments,
+	ValidatorConstraint,
+	ValidatorConstraintInterface
 } from "class-validator"
+import { EentertainmentTypes, Status } from "prisma/prisma-client"
 import { CityExists } from "../decorator/cityExistsAndBelongToTheCountry"
 import { CountryExists } from "../decorator/countryExists.decorator"
-import { Status, EentertainmentTypes } from "prisma/prisma-client"
 export class CompleteProfileDTO {
 	@IsString()
 	@IsNotEmpty()
@@ -93,4 +97,46 @@ class NewInterests {
 	@IsNotEmpty()
 	@IsEnum(EentertainmentTypes)
 	type: EentertainmentTypes
+}
+@ValidatorConstraint({ name: "GreaterThan" })
+class EndYearGreaterThanStartYear implements ValidatorConstraintInterface {
+	validate(value: number, validationArguments): boolean | Promise<boolean> {
+		return value > validationArguments.object.year
+	}
+	defaultMessage?(validationArguments?: ValidationArguments): string {
+		return "End Year Should be Greater than Start Year"
+	}
+}
+export class CompleteUserJobsDTO {
+	@IsNotEmpty()
+	@IsArray()
+	@ArrayNotEmpty()
+	@ValidateNested({ each: true })
+	@Type(() => Jobs)
+	jobs: Jobs[]
+}
+
+class Jobs {
+	@IsString()
+	@IsNotEmpty()
+	@MinLength(10)
+	titleOrPlace: string
+
+	@IsNumber()
+	@Min(1980)
+	@Max(new Date().getFullYear())
+	@IsNotEmpty()
+	year: number
+
+	@IsNumber()
+	@Min(1980)
+	@Max(new Date().getFullYear())
+	@IsNotEmpty()
+	@Validate(EndYearGreaterThanStartYear)
+	endYear: number
+
+	@IsString()
+	@IsOptional()
+	@MinLength(25)
+	description?: string
 }

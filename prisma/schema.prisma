@@ -29,6 +29,10 @@ model User {
   city           City?           @relation(fields: [cityId], references: [id])
   country        Country?        @relation(fields: [countryId], references: [id])
   Entertainments Entertainment[] @relation("EntertainmentToUser")
+  Jobs Job[]
+
+  @@index([countryId])
+  @@index([cityId])
 }
 
 model Country {
@@ -46,6 +50,8 @@ model City {
   countryId Int
   country   Country @relation(fields: [countryId], references: [id])
   user      User[]
+
+  @@index([countryId])
 }
 
 model Entertainment {
@@ -67,4 +73,16 @@ enum EentertainmentTypes {
   BOOKS
   GAMES
   HOBBIES
+}
+
+model Job {
+  id Int @id @default(autoincrement())
+  titleOrPlace String
+  year Int 
+  endYear Int
+  description String?
+  userId Int
+  user User @relation(fields: [userId],references: [id])
+
+  @@index([userId])
 }

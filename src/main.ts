@@ -4,6 +4,7 @@ import { TransformResponseInterceptor } from "./TransformResponseInterceptor"
 import VP from "./modifiedValidationPipr"
 import { HttpExceptionFilter } from "./htttp.filter"
 import { useContainer } from "class-validator"
+import * as bodyParser from "body-parser"
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)

@@ -4,6 +4,7 @@ import { PrismaService } from "src/prisma/prisma.service"
 import {
 	CompleteInterestsDTO,
 	CompleteProfileDTO,
+	CompleteUserJobsDTO,
 } from "./dto/completeProfileDto"
 
 @Injectable()
@@ -49,5 +50,24 @@ export class UsersService {
 		})
 
 		return "Done Successfully'"
+	}
+
+	async completeUserProfileJobs(
+		user: Omit<User, "password">,
+		dto: CompleteUserJobsDTO,
+	) {
+		await this.prisma.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				Jobs: {
+					create: dto.jobs,
+				},
+			},
+		})
+
+
+		return "Done Successfully"
 	}
 }

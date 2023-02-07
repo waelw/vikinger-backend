@@ -7,6 +7,7 @@ import { PrismaService } from "src/prisma/prisma.service"
 import {
 	CompleteInterestsDTO,
 	CompleteProfileDTO,
+	CompleteUserJobsDTO,
 } from "./dto/completeProfileDto"
 
 import { UsersService } from "./users.service"
@@ -47,5 +48,10 @@ export class UsersController {
 		@Body() completeInterestsDTO: CompleteInterestsDTO,
 	) {
 		return this.usersService.completeInterests(user, completeInterestsDTO)
+	}
+
+	@Post("users/profile/jobs")
+	async completeUsersProfileJobs(@GetUser() user:Omit<User,"password">,@Body() completeUserJobDTO: CompleteUserJobsDTO){
+		return this.usersService.completeUserProfileJobs(user,completeUserJobDTO)
 	}
 }

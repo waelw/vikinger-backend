@@ -1,11 +1,9 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common"
+import { Injectable } from "@nestjs/common"
 
 import {
-	registerDecorator,
-	ValidationArguments,
-	ValidationOptions,
+	registerDecorator, ValidationOptions,
 	ValidatorConstraint,
-	ValidatorConstraintInterface,
+	ValidatorConstraintInterface
 } from "class-validator"
 import { PrismaService } from "src/prisma/prisma.service"
 import { CompleteProfileDTO } from "../dto/completeProfileDto"
