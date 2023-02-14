@@ -1,7 +1,4 @@
-import { EentertainmentTypes, PrismaClient } from "@prisma/client"
-import { USERS } from "./users"
-import { faker } from '@faker-js/faker';
-import countrySeed from "./countryCitySeed"
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient()
 async function main() {
 	// USERS.map(async user => {
@@ -25,7 +22,7 @@ async function main() {
 	// 	})
 	// }
 
-	// countrySeed(prisma)
+	// countrySeed(prisma)cd
 }
 main()
 	.then(async () => {

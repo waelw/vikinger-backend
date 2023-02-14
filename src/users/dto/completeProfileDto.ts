@@ -80,9 +80,7 @@ export class CompleteInterestsDTO {
 	@IsNumber({}, { message: "each value must be a number", each: true })
 	interests: number[]
 
-	@IsNotEmpty()
 	@IsArray()
-	@ArrayNotEmpty()
 	@ValidateNested({ each: true })
 	@Type(() => NewInterests)
 	new: NewInterests[]
