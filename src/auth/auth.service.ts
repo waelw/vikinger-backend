@@ -5,6 +5,11 @@ import * as argon from "argon2"
 import { JwtService } from "@nestjs/jwt"
 import { ConfigService } from "@nestjs/config"
 import { Response } from "express"
+import { UseGuards } from "@nestjs/common/decorators"
+import { JwtGaurd } from "./Guard/jwtGaurd"
+import { GetUser } from "./decorator/param.decorator"
+import { User } from "@prisma/client"
+import { ForbiddenException } from "@nestjs/common/exceptions"
 @Injectable()
 export class AuthService {
 	constructor(
@@ -36,8 +41,21 @@ export class AuthService {
 
 		const token = await this.signToken(user.id, user.email)
 		delete user.password
+		const hashedRTToken = await argon.hash(token.rt)
 
-		return { user, token }
+		await this.prismaService.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				refreshToken: hashedRTToken,
+			},
+		})
+		return {
+			user,
+			token: token.at,
+			refresh: token.rt,
+		}
 	}
 
 	async signUpLocal(dto: SignupDto) {
@@ -86,21 +104,84 @@ export class AuthService {
 		//generate the token
 		const token = await this.signToken(others.id, others.email)
 
+		const hashedRTToken = await argon.hash(token.rt)
+
+		await this.prismaService.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				refreshToken: hashedRTToken,
+			},
+		})
 		return {
 			user: others,
-			token,
+			token: token.at,
+			refresh: token.rt,
 		}
 	}
 
-	signToken(userID: number, email: string): Promise<string> {
+	async signToken(
+		userID: number,
+		email: string,
+	): Promise<{ at: string; rt: string }> {
 		const payload = {
 			sub: userID,
 			email,
 		}
 
-		return this.jwt.signAsync(payload, {
-			expiresIn: "8h",
+		const at = await this.jwt.signAsync(payload, {
+			expiresIn: "15m",
 			secret: this.config.get("JWT_SECRET"),
 		})
+
+		const rt = await this.jwt.signAsync(payload, {
+			expiresIn: "7d",
+			secret: this.config.get("REFRESH_JWT_SECRET"),
+		})
+
+		return { at, rt }
+	}
+
+	async logout(user: User) {
+		if (!user) throw new ForbiddenException("Access denied")
+		await this.prismaService.user.updateMany({
+			where: {
+				id: user.id,
+				refreshToken: {
+					not: null,
+				},
+			},
+			data: {
+				refreshToken: null,
+			},
+		})
+		return "Success"
+	}
+
+	async refresh(user: User, rt: string) {
+		if (!user) throw new ForbiddenException("Access denied")
+		if (!rt) throw new ForbiddenException("Access denied")
+
+		const isRTAuthed = await argon.verify(user.refreshToken, rt)
+
+		if (!isRTAuthed) throw new ForbiddenException("Access denied")
+
+		const token = await this.signToken(user.id, user.email)
+
+		const hashedRTToken = await argon.hash(token.rt)
+
+		await this.prismaService.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				refreshToken: hashedRTToken,
+			},
+		})
+		return {
+			token: token.at,
+			refresh: token.rt,
+		}
 	}
 }

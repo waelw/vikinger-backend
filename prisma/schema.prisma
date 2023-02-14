@@ -30,6 +30,7 @@ model User {
   country        Country?        @relation(fields: [countryId], references: [id])
   Entertainments Entertainment[] @relation("EntertainmentToUser")
   Jobs Job[]
+  refreshToken String?
 
   @@index([countryId])
   @@index([cityId])
