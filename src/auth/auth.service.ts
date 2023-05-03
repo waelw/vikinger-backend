@@ -108,7 +108,7 @@ export class AuthService {
 
 		await this.prismaService.user.update({
 			where: {
-				id: user.id,
+				id: others.id,
 			},
 			data: {
 				refreshToken: hashedRTToken,

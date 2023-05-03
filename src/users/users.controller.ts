@@ -8,6 +8,7 @@ import {
 	CompleteInterestsDTO,
 	CompleteProfileDTO,
 	CompleteUserJobsDTO,
+	UpdateUserSocilasDTO,
 } from "./dto/completeProfileDto"
 
 import { UsersService } from "./users.service"
@@ -20,7 +21,7 @@ export class UsersController {
 	) {}
 	@Get("me")
 	async getUser(@GetUser() user: User) {
-		const { password, ...retrievedUser } = await this.prisma.user.findUnique({
+		const { password,refreshToken, ...retrievedUser } = await this.prisma.user.findUnique({
 			where: {
 				id: user.id,
 			},
@@ -28,7 +29,8 @@ export class UsersController {
 				city: true,
 				country: true,
 				Entertainments: true,
-				Jobs:true
+				Jobs:true,
+				socialLinks:true
 			},
 		})
 
@@ -54,5 +56,10 @@ export class UsersController {
 	@Post("users/profile/jobs")
 	async completeUsersProfileJobs(@GetUser() user:Omit<User,"password">,@Body() completeUserJobDTO: CompleteUserJobsDTO){
 		return this.usersService.completeUserProfileJobs(user,completeUserJobDTO)
+	}
+
+	@Post("users/profile/social")
+	async updateUserSocialLinks(@GetUser() user:Omit<User,"password">,@Body() updateUserSocilasDTO:UpdateUserSocilasDTO){
+		return this.usersService.updateUserSocialLinks(user,updateUserSocilasDTO)
 	}
 }

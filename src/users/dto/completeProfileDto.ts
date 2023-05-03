@@ -1,10 +1,13 @@
 import { Transform, Type } from "class-transformer"
 import {
-	ArrayNotEmpty, IsArray,
+	ArrayNotEmpty,
+	IsArray,
 	IsDate,
 	IsEmail,
-	IsEnum, IsNotEmpty,
+	IsEnum,
+	IsNotEmpty,
 	IsNumber,
+	IsObject,
 	IsOptional,
 	IsString,
 	IsUrl,
@@ -17,11 +20,14 @@ import {
 	ValidateNested,
 	ValidationArguments,
 	ValidatorConstraint,
-	ValidatorConstraintInterface
+	ValidatorConstraintInterface,
 } from "class-validator"
-import { EentertainmentTypes, Status } from "prisma/prisma-client"
+import { EentertainmentTypes, Status, Platform } from "prisma/prisma-client"
 import { CityExists } from "../decorator/cityExistsAndBelongToTheCountry"
 import { CountryExists } from "../decorator/countryExists.decorator"
+import { Type as TransformType } from "class-transformer"
+import { IsObjectNotArray } from "../decorator/IsObjectNotArray.decorator"
+
 export class CompleteProfileDTO {
 	@IsString()
 	@IsNotEmpty()
@@ -112,6 +118,18 @@ export class CompleteUserJobsDTO {
 	@Type(() => Jobs)
 	jobs: Jobs[]
 }
+class InnerDto {
+	@IsString()
+	@IsNotEmpty()
+	name: string
+
+	@IsNumber()
+	price: number
+}
+export class UpdateUserSocilasDTO {
+	@IsObjectNotArray()
+	inner: InnerDto
+}
 
 class Jobs {
 	@IsString()
@@ -136,4 +154,16 @@ class Jobs {
 	@IsOptional()
 	@MinLength(25)
 	description?: string
+}
+
+class Link {
+	@IsNotEmpty()
+	@IsString()
+	@IsUrl()
+	link: string
+
+	@IsString()
+	@IsNotEmpty()
+	@IsEnum(Platform)
+	platform: Platform
 }

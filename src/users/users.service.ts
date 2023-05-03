@@ -5,6 +5,7 @@ import {
 	CompleteInterestsDTO,
 	CompleteProfileDTO,
 	CompleteUserJobsDTO,
+	UpdateUserSocilasDTO,
 } from "./dto/completeProfileDto"
 
 @Injectable()
@@ -67,7 +68,25 @@ export class UsersService {
 			},
 		})
 
-
 		return "Done Successfully"
+	}
+
+	async updateUserSocialLinks(
+		user: Omit<User, "password">,
+		data: UpdateUserSocilasDTO,
+	){
+
+		//validated data
+
+		// check if any existing 
+
+
+		//update the exsiting
+
+		//add the non-exsisting
+
+		//respond with new user links
+
+		return {data}
 	}
 }

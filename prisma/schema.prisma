@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -29,8 +29,9 @@ model User {
   city           City?           @relation(fields: [cityId], references: [id])
   country        Country?        @relation(fields: [countryId], references: [id])
   Entertainments Entertainment[] @relation("EntertainmentToUser")
-  Jobs Job[]
-  refreshToken String?
+  socialLinks    SocialLinks[]
+  Jobs           Job[]
+  refreshToken   String?
 
   @@index([countryId])
   @@index([cityId])
@@ -77,13 +78,42 @@ enum EentertainmentTypes {
 }
 
 model Job {
-  id Int @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   titleOrPlace String
-  year Int 
-  endYear Int
-  description String?
-  userId Int
-  user User @relation(fields: [userId],references: [id])
+  year         Int
+  endYear      Int
+  description  String?
+  userId       Int
+  user         User    @relation(fields: [userId], references: [id])
 
   @@index([userId])
+}
+
+model SocialLinks {
+  id        Int      @id @default(autoincrement())
+  link      String
+  platform  Platform
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+enum Platform {
+  FACEBOOK
+  TWITTER
+  LINKEDIN
+  INSTAGRAM
+  TWITCH
+  GOOGLEPLUS
+  YOUTUBE
+  PATREON
+  DISCORD
+  DEVIANTART
+  BEHANCE
+  DRIBBBLE
+  ARTSTATION
+  PINTEREST
 }

@@ -11,7 +11,6 @@ import { PrismaService } from "src/prisma/prisma.service"
 
 export function CountryExists(validationOptions?: ValidationOptions) {
 	return function (object: any, propertyName: string) {
-		console.log(validationOptions)
 		registerDecorator({
 			target: object.constructor,
 			propertyName: propertyName,

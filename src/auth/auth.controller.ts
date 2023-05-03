@@ -31,7 +31,6 @@ export class AuthController {
 	@UseGuards(RefreshJwtGaurd)
 	@Post("refresh")
 	refresh(@GetUser() user: { data: User; refreshToken: string }) {
-		console.log(user)
 		return this.authService.refresh(user.data,user.refreshToken)
 	}
 }

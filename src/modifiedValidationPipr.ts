@@ -5,7 +5,6 @@ import {
 } from "@nestjs/common"
 function getErrorsObj(errors: ValidationError[]): ValidationError {
 	if (errors[0].children.length) {
-		console.log("test")
 		return getErrorsObj(errors[0].children)
 	} else {
 		return errors[0]
@@ -14,60 +13,42 @@ function getErrorsObj(errors: ValidationError[]): ValidationError {
 const VP = new ValidationPipe({
 	whitelist: true,
 	exceptionFactory: function (validationErrors: ValidationError[]) {
-		let modifiedError = {
+		return new BadRequestException({
 			status: 400,
-			errors: {},
-		}
-
-		validationErrors.forEach(error => {
-			if (!error.children.length)
-				for (const message of Object.values(error.constraints)) {
-					let errorObj
-					try {
-						const parsed = JSON.parse(message)
-						if (!parsed && typeof parsed !== "object") {
-							throw new Error("still not an object")
-						}
-
-						errorObj = parsed
-					} catch (e) {
-						errorObj = {
-							[error.property]: message,
-						}
-					}
-
-					modifiedError = {
-						...modifiedError,
-						errors: { ...modifiedError.errors, ...errorObj },
-					}
-				}
-			else {
-				const e = getErrorsObj(error.children)
-				for (const message of Object.values(e.constraints)) {
-					let errorObj
-					try {
-						const parsed = JSON.parse(message)
-						if (!parsed && typeof parsed !== "object") {
-							throw new Error("still not an object")
-						}
-
-						errorObj = parsed
-					} catch (er) {
-						errorObj = {
-							[e.property]: message,
-						}
-					}
-
-					modifiedError = {
-						...modifiedError,
-						errors: { ...modifiedError.errors, ...errorObj },
-					}
-				}
-			}
+			errors: errorValidationResponseHelper(validationErrors),
 		})
-
-		return new BadRequestException(modifiedError)
 	},
 })
 
 export default VP
+
+function errorValidationResponseHelper(error: ValidationError[]) {
+	const formattedErrors = {}
+	console.log(error)
+	error.forEach(err => {
+		if (err.children?.length) {
+			err.children.forEach(childerr => {
+				formatRecusive(childerr, formattedErrors, err.property)
+			})
+		} else {
+			formattedErrors[err.property] = Object.values(err.constraints)
+		}
+	})
+	return formattedErrors
+}
+
+function formatRecusive(
+	err: ValidationError,
+	targetObject: object,
+	parentPrefix: string,
+) {
+	if (err.children?.length) {
+		err.children.forEach(childerr => {
+			formatRecusive(childerr, targetObject, parentPrefix + "." + err.property)
+		})
+	} else {
+		targetObject[parentPrefix + "." + err.property] = Object.values(
+			err.constraints,
+		)
+	}
+}

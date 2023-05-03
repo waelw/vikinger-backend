@@ -3,8 +3,7 @@ import {
 	Injectable,
 	NestInterceptor,
 	ExecutionContext,
-	CallHandler,
-	createParamDecorator,
+	CallHandler
 } from "@nestjs/common"
 import { map, Observable } from "rxjs"
 import { NextFunction, Request, Response } from "express"
@@ -58,7 +57,6 @@ export class PaginationMiddleware implements NestMiddleware {
 		}
 		req.query.page =
 			req.query.page && Number(req.query.page) > 1 ? req.query.page : "1"
-			console.log(req.query.pageSize)
 		req.query.pageSize =
 			req.query.pageSize && Number(req.query.pageSize) >= 1
 				? req.query.pageSize

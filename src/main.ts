@@ -4,7 +4,7 @@ import { TransformResponseInterceptor } from "./TransformResponseInterceptor"
 import VP from "./modifiedValidationPipr"
 import { HttpExceptionFilter } from "./htttp.filter"
 import { useContainer } from "class-validator"
-import * as bodyParser from "body-parser"
+import * as express from "express"
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
@@ -16,7 +16,9 @@ async function bootstrap() {
 		origin: "*",
 		credentials: true,
 	})
-	useContainer(app.select(AppModule), { fallbackOnErrors: true });
+	app.use(express.json())
+	app.use(express.urlencoded({ extended: true }))
+	useContainer(app.select(AppModule), { fallbackOnErrors: true })
 	await app.listen(process.env.PORT || 3000)
 }
 bootstrap()
