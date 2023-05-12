@@ -7,6 +7,7 @@ import { PrismaModule } from "./prisma/prisma.module"
 import { ConfigModule } from "@nestjs/config"
 import { CountryModule } from "./country/country.module"
 import { EntertainmentModule } from "./entertainment/entertainment.module"
+import { QuestionModule } from './question/question.module';
 
 @Module({
 	imports: [
@@ -16,6 +17,7 @@ import { EntertainmentModule } from "./entertainment/entertainment.module"
 		ConfigModule.forRoot({ isGlobal: true }),
 		CountryModule,
 		EntertainmentModule,
+		QuestionModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

@@ -21,20 +21,21 @@ export class UsersController {
 	) {}
 	@Get("me")
 	async getUser(@GetUser() user: User) {
-		const { password,refreshToken, ...retrievedUser } = await this.prisma.user.findUnique({
-			where: {
-				id: user.id,
-			},
-			include: {
-				city: true,
-				country: true,
-				Entertainments: true,
-				Jobs:true,
-				socialLinks:true
-			},
-		})
+		const { password, refreshToken, Jobs, Entertainments, ...retrievedUser } =
+			await this.prisma.user.findUnique({
+				where: {
+					id: user.id,
+				},
+				include: {
+					city: true,
+					country: true,
+					Entertainments: true,
+					Jobs: true,
+					socialLinks: true,
+				},
+			})
 
-		return retrievedUser
+		return { ...retrievedUser, jobs: Jobs, entertainments: Entertainments }
 	}
 
 	@Post("users/profile")
@@ -54,12 +55,18 @@ export class UsersController {
 	}
 
 	@Post("users/profile/jobs")
-	async completeUsersProfileJobs(@GetUser() user:Omit<User,"password">,@Body() completeUserJobDTO: CompleteUserJobsDTO){
-		return this.usersService.completeUserProfileJobs(user,completeUserJobDTO)
+	async completeUsersProfileJobs(
+		@GetUser() user: Omit<User, "password">,
+		@Body() completeUserJobDTO: CompleteUserJobsDTO,
+	) {
+		return this.usersService.completeUserProfileJobs(user, completeUserJobDTO)
 	}
 
 	@Post("users/profile/social")
-	async updateUserSocialLinks(@GetUser() user:Omit<User,"password">,@Body() updateUserSocilasDTO:UpdateUserSocilasDTO){
-		return this.usersService.updateUserSocialLinks(user,updateUserSocilasDTO)
+	async updateUserSocialLinks(
+		@GetUser() user: Omit<User, "password">,
+		@Body() updateUserSocilasDTO: UpdateUserSocilasDTO,
+	) {
+		return this.usersService.updateUserSocialLinks(user, updateUserSocilasDTO)
 	}
 }

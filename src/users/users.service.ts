@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { User } from "@prisma/client"
+import { Platform, User } from "@prisma/client"
 import { PrismaService } from "src/prisma/prisma.service"
 import {
 	CompleteInterestsDTO,
@@ -24,6 +24,7 @@ export class UsersService {
 				...completeProfileDTO,
 				city: { connect: { id: completeProfileDTO.city } },
 				country: { connect: { id: completeProfileDTO.country } },
+				birthday: new Date(completeProfileDTO.birthday),
 			},
 		})
 		return retrievedUser
@@ -57,6 +58,15 @@ export class UsersService {
 		user: Omit<User, "password">,
 		dto: CompleteUserJobsDTO,
 	) {
+
+		await this.prisma.job.deleteMany({
+			where:{
+				userId:user.id
+			}
+		})
+
+
+
 		await this.prisma.user.update({
 			where: {
 				id: user.id,
@@ -74,19 +84,72 @@ export class UsersService {
 	async updateUserSocialLinks(
 		user: Omit<User, "password">,
 		data: UpdateUserSocilasDTO,
-	){
+	) {
+		const { links } = data
+		const strippedRedundantLinks = links.reduce<
+			Partial<{ [key in Platform]: string }>
+		>((prev, curr) => {
+			return {
+				...prev,
+				[curr.platform]: curr.link,
+			}
+		}, {})
+		// check if any existing
+		const userLinks = await this.prisma.socialLinks.findMany({
+			where: {
+				userId: user.id,
+			},
+		})
 
-		//validated data
-
-		// check if any existing 
-
-
+		console.log({
+			userLinks,
+		})
+		const userLinksToUpdate = userLinks.filter(link =>
+			Object.keys(strippedRedundantLinks).includes(link.platform),
+		)
 		//update the exsiting
 
+		await Promise.all(
+			userLinksToUpdate.map(link =>
+				this.prisma.socialLinks.update({
+					where: {
+						id: link.id,
+					},
+					data: {
+						link: strippedRedundantLinks[link.platform],
+					},
+				}),
+			),
+		)
+
 		//add the non-exsisting
+		const strippedAlreadyUpdatedLinks = { ...strippedRedundantLinks }
+		const userPlatforms = userLinks.map(link => link.platform)
+		userPlatforms.forEach(platform => {
+			delete strippedAlreadyUpdatedLinks[platform]
+		})
+
+		const { socialLinks } = await this.prisma.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				socialLinks: {
+					createMany: {
+						data: Object.entries(strippedAlreadyUpdatedLinks).map(link => ({
+							link: link[1],
+							platform: link[0],
+						})) as { link: string; platform: Platform }[],
+					},
+				},
+			},
+			include: {
+				socialLinks: true,
+			},
+		})
 
 		//respond with new user links
 
-		return {data}
+		return socialLinks.map(({ link, platform }) => ({ link, platform }))
 	}
 }

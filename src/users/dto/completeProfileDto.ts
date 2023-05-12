@@ -3,6 +3,7 @@ import {
 	ArrayNotEmpty,
 	IsArray,
 	IsDate,
+	IsDateString,
 	IsEmail,
 	IsEnum,
 	IsNotEmpty,
@@ -63,7 +64,7 @@ export class CompleteProfileDTO {
 	@ValidateIf(o => !!o.country)
 	city: number
 
-	@IsDate()
+	@IsDateString()
 	@IsNotEmpty()
 	birthday: string
 
@@ -118,17 +119,12 @@ export class CompleteUserJobsDTO {
 	@Type(() => Jobs)
 	jobs: Jobs[]
 }
-class InnerDto {
-	@IsString()
-	@IsNotEmpty()
-	name: string
-
-	@IsNumber()
-	price: number
-}
 export class UpdateUserSocilasDTO {
-	@IsObjectNotArray()
-	inner: InnerDto
+	@IsArray()
+	@ArrayNotEmpty()
+	@ValidateNested({ each: true })
+	@Type(() => Link)
+	links: Link[]
 }
 
 class Jobs {
@@ -157,8 +153,8 @@ class Jobs {
 }
 
 class Link {
-	@IsNotEmpty()
 	@IsString()
+	@ValidateIf((_, value) => value)
 	@IsUrl()
 	link: string
 
